@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, MouseEvent, SubmitEvent } from "react";
+import { useState, useRef, useEffect, SubmitEvent } from "react";
 
 type FilterType = "all" | "todo" | "done";
 
@@ -70,9 +70,15 @@ function ManageItems({ handleAdd, handleDelete } : ManagerProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-\     <input type="text" ref={inputRef} placeholder="Enter task..."/>
-      <button type="submit">Add task</button>
-      <button onClick={handleDelete}>Clear complete tasks</button>
+      <div className='inline-element'>
+        <input type="text" ref={inputRef} placeholder="Enter task..."/>
+      </div>
+      <div className='inline-element'>
+        <button type="submit">Add task</button>
+      </div>
+      <div className='inline-element'>
+        <button onClick={handleDelete}>Clear complete tasks</button>
+      </div>
     </form>
   );
 }
@@ -125,9 +131,7 @@ export default function App() {
     localStorage.setItem("items", JSON.stringify(items));
   }, [items]);
 
-  const handleAdd = (text: string) => {
-    console.log(text ? text : "null");
-    
+  const handleAdd = (text: string) => {    
     if (!text) {
       return;
     }
