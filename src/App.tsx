@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, MouseEvent } from "react";
+import { useState, useRef, useEffect, MouseEvent, SubmitEvent } from "react";
 
 type FilterType = "all" | "todo" | "done";
 
@@ -57,9 +57,9 @@ function List({ items, onToggle } : ListProps) {
 function ManageItems({ handleAdd, handleDelete } : ManagerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e : MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = (e : SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const taskText = inputRef.current?.value;
+    const taskText = inputRef.current?.value.trim();
     if (taskText){
       handleAdd(taskText);
     }
@@ -69,17 +69,11 @@ function ManageItems({ handleAdd, handleDelete } : ManagerProps) {
   };
 
   return (
-    <>
-      <div style={{ paddingBottom: 10 }}>
-        <input type="text" ref={inputRef} placeholder="Enter task..."/>
-      </div>
-      <div className="inline-element">
-        <button onClick={handleSubmit}>Add task</button>
-      </div>
-      <div className="inline-element" style={{ padding: 10 }}>
-        <button onClick={handleDelete}>Clear complete tasks</button>
-      </div>
-    </>
+    <form onSubmit={handleSubmit}>
+\     <input type="text" ref={inputRef} placeholder="Enter task..."/>
+      <button type="submit">Add task</button>
+      <button onClick={handleDelete}>Clear complete tasks</button>
+    </form>
   );
 }
 
