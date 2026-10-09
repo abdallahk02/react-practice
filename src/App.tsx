@@ -19,12 +19,12 @@ type ListProps = {
 }
 
 type ManagerProps = {
-  handleAdd: (text: string | null) => void,
+  handleAdd: (text: string) => void,
   handleDelete: () => void;
 }
 
 type FilterProps = {
-  filter: FilterType;
+  currFilter: FilterType;
   onFilter: (status: FilterType) => void
 }
 
@@ -59,8 +59,10 @@ function ManageItems({ handleAdd, handleDelete } : ManagerProps) {
 
   const handleSubmit = (e : MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const taskText = inputRef.current?.value || null;
-    handleAdd(taskText);
+    const taskText = inputRef.current?.value;
+    if (taskText){
+      handleAdd(taskText);
+    }
     if (inputRef.current){
       inputRef.current.value = "";
     }
@@ -81,7 +83,7 @@ function ManageItems({ handleAdd, handleDelete } : ManagerProps) {
   );
 }
 
-function filter({ filter, onFilter } : FilterProps) {
+function TaskFilter({ currFilter, onFilter } : FilterProps) {
   return (
     <fieldset>
       <label>
@@ -89,7 +91,7 @@ function filter({ filter, onFilter } : FilterProps) {
           type="radio"
           name="tasks"
           value="all"
-          checked={filter === 'all'}
+          checked={currFilter === 'all'}
           onChange={() => onFilter("all")}
         />
         All
@@ -99,7 +101,7 @@ function filter({ filter, onFilter } : FilterProps) {
           type="radio"
           name="tasks"
           value="todo"
-          checked={filter === 'todo'}
+          checked={currFilter === 'todo'}
           onChange={() => onFilter("todo")}
         />
         Active
@@ -109,7 +111,7 @@ function filter({ filter, onFilter } : FilterProps) {
           type="radio"
           name="tasks"
           value="done"
-          checked={filter === 'done'}
+          checked={currFilter === 'done'}
           onChange={() => onFilter("done")}
         />
         Complete
@@ -123,13 +125,13 @@ export default function App() {
     const stored = localStorage.getItem("items");
     return stored ? JSON.parse(stored) : [];
   });
-  const [filter, setfilter] = useState<FilterType>('all');
+  const [currFilter, setFilter] = useState<FilterType>('all');
 
   useEffect(() => {
     localStorage.setItem("items", JSON.stringify(items));
   }, [items]);
 
-  const handleAdd = (text: string | null) => {
+  const handleAdd = (text: string) => {
     console.log(text ? text : "null");
     
     if (!text) {
@@ -155,19 +157,19 @@ export default function App() {
   };
 
   const onFilter = (status:FilterType) => {
-    setfilter(status);
+    setFilter(status);
   };
 
   let filteredItems = items;
-  if (filter === "todo") {
+  if (currFilter === "todo") {
     filteredItems = filteredItems.filter((item:Item) => !item.done);
-  } else if (filter === "done") {
-    filteredItems = filteredItems.filter((item:Item) => !item.done);
+  } else if (currFilter === "done") {
+    filteredItems = filteredItems.filter((item:Item) => item.done);
   }
   return (
     <>
       <h1>TO-DO</h1>
-      <filter filter={filter} onFilter={onFilter} />
+      <TaskFilter currFilter={currFilter} onFilter={onFilter} />
       <List items={filteredItems} onToggle={onToggle} />
       <ManageItems handleAdd={handleAdd} handleDelete={handleDelete} />
     </>
